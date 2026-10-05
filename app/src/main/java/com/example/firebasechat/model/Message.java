@@ -1,4 +1,4 @@
-package com.example.firebasechat.data.model;
+package com.example.firebasechat.model;
 
 
 import java.time.LocalDateTime;
