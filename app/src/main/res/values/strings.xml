@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Firebase Chat</string>
+    <string name="btnSaveTxt">Guardar</string>
+    <string name="emailTextView">Email</string>
+    <string name="emailTextViewHint">ej. miEmail@gmail.com</string>
+    <string name="passwordTextView">Password</string>
 </resources>
