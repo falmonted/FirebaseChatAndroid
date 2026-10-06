@@ -4,4 +4,5 @@
     <string name="emailTextView">Email</string>
     <string name="emailTextViewHint">ej. miEmail@gmail.com</string>
     <string name="passwordTextView">Password</string>
+    <string name="textViewLoginTitle">Login</string>
 </resources>

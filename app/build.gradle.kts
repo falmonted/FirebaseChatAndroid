@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
+    implementation(libs.fragment)
     implementation(libs.fragment.ktx)
     implementation(libs.legacy.support.v4)
     implementation(libs.lifecycle.livedata.ktx)
