@@ -11,7 +11,7 @@
     tools:context=".view.LoginFragment">
 
     <TextView
-        android:id="@+id/textViewLoginTitle"
+        android:id="@+id/lbLoginTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="80dp"
@@ -21,35 +21,35 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/emailTextView"
+        android:id="@+id/lbEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/emailTextViewHint"
-        android:text="@string/emailTextView"
+        android:hint="@string/txtEmailHint"
+        android:text="@string/lbEmail"
         android:textSize="20sp"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/editTextTextEmailAddress"
+        android:id="@+id/txtEmailAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="@string/emailTextViewHint"
+        android:hint="@string/txtEmailHint"
         android:inputType="textEmailAddress"
         android:minWidth="48dp"
         android:minHeight="48dp" />
 
     <TextView
-        android:id="@+id/passwordTextView"
+        android:id="@+id/lbPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="@string/passwordTextView"
+        android:text="@string/lbPassword"
         android:textSize="20sp"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/editTextTextPassword"
+        android:id="@+id/txtPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -58,13 +58,29 @@
         android:minHeight="48dp" />
 
     <Button
-        android:id="@+id/btnSaveTxt"
+        android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="70dp"
         android:backgroundTint="@color/primaryColor"
-        android:text="@string/btnSaveTxt"
+        android:text="@string/btnLoginTxt"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lblCreateAccount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:gravity="center"
+        android:text="@string/lbNotAccount"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnSignup"
+        android:layout_width="115dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorSignup"
+        android:text="@string/btnSignUptxt" />
 
 </LinearLayout>
