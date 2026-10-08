@@ -1,32 +1,67 @@
 package com.example.firebasechat.model;
 
-import java.time.LocalDateTime;
+import com.google.firebase.Timestamp;
 
 public class User {
     private String userId;
+    private String username;
     private String email;
-    private String password;
-
     private boolean isOnline;
-    private LocalDateTime last_seen;
+    private Timestamp  last_seen;
 
-    private Media profilePic = null;
+    private String profilePicUrl;
+    private String profilePicPath;
 
-    public User(String userId, String email, String password, boolean isOnline, LocalDateTime last_seen, Media profilePic) {
-        this.userId = userId;
-        this.email = email;
-        this.password = password;
-        this.isOnline = isOnline;
-        this.last_seen = last_seen;
-        this.profilePic = profilePic;
+    public User() {
     }
 
-    public User(String userId, String email, String password, boolean isOnline, LocalDateTime last_seen) {
+    public User(String userId, String username, String email,
+                boolean isOnline, Timestamp last_seen, String profilePicUrl, String profilePicPath) {
+
         this.userId = userId;
+        this.username = username;
         this.email = email;
-        this.password = password;
         this.isOnline = isOnline;
         this.last_seen = last_seen;
+        this.profilePicUrl = profilePicUrl;
+        this.profilePicPath = profilePicPath;
+    }
+
+
+    public User(String userId, String email, boolean isOnline, Timestamp  last_seen) {
+        this.userId = userId;
+        this.email = email;
+        this.isOnline = isOnline;
+        this.last_seen = last_seen;
+    }
+
+    public User(String userId, String email) {
+        this.userId = userId;
+        this.email = email;
+    }
+
+    public String getProfilePicUrl() {
+        return profilePicUrl;
+    }
+
+    public void setProfilePicUrl(String profilePicUrl) {
+        this.profilePicUrl = profilePicUrl;
+    }
+
+    public String getProfilePicPath() {
+        return profilePicPath;
+    }
+
+    public void setProfilePicPath(String profilePicPath) {
+        this.profilePicPath = profilePicPath;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getUserId() {
@@ -44,15 +79,6 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public boolean isOnline() {
         return isOnline;
     }
@@ -61,19 +87,12 @@ public class User {
         isOnline = online;
     }
 
-    public LocalDateTime getLast_seen() {
+    public Timestamp  getLast_seen() {
         return last_seen;
     }
 
-    public void setLast_seen(LocalDateTime last_seen) {
+    public void setLast_seen(Timestamp  last_seen) {
         this.last_seen = last_seen;
     }
 
-    public Media getProfilePic() {
-        return profilePic;
-    }
-
-    public void setProfilePic(Media profilePic) {
-        this.profilePic = profilePic;
-    }
 }
