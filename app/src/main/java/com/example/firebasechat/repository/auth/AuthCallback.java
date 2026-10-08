@@ -1,4 +1,4 @@
-package com.example.firebasechat.repository;
+package com.example.firebasechat.repository.auth;
 
 import com.google.firebase.auth.FirebaseUser;
 

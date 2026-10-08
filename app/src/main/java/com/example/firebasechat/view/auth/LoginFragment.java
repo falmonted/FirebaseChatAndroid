@@ -1,13 +1,13 @@
-package com.example.firebasechat.view;
+package com.example.firebasechat.view.auth;
+
+import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
@@ -18,16 +18,15 @@ import android.widget.Toast;
 
 import com.example.firebasechat.R;
 import com.example.firebasechat.databinding.FragmentLoginBinding;
-import com.example.firebasechat.databinding.FragmentRegisterBinding;
 import com.example.firebasechat.viewmodel.LoginViewModel;
 
-public class RegisterFragment extends Fragment {
-
+public class LoginFragment extends Fragment {
     private LoginViewModel viewModel;
-    private FragmentRegisterBinding binding;
 
-    public RegisterFragment() {
-        // Required empty public constructor
+    private FragmentLoginBinding binding;
+
+    public static LoginFragment newInstance() {
+        return new LoginFragment();
     }
 
     @SuppressLint("SetTextI18n") //para settext //ELIMINAR
@@ -35,12 +34,13 @@ public class RegisterFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
-        binding = FragmentRegisterBinding.inflate(inflater, container, false);
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
 
         binding.txtEmailAddress.setText("admin123@gmail.com");  //ELIMINAR
         binding.txtPassword.setText("admin123");
 
-        binding.btnSignup.setOnClickListener(new View.OnClickListener() {
+
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = binding.txtEmailAddress.getText().toString().trim();
@@ -60,19 +60,9 @@ public class RegisterFragment extends Fragment {
                     isValid = false;
                 }
                 if (isValid) {
-                    createAccount(email, password);
+                    signIn(email, password);
                 }
 
-            }
-        });
-
-        //Check if Register was successful
-        viewModel.isSignupSuccessful().observe(getViewLifecycleOwner(), isSignupSuccessful ->{
-            if (isSignupSuccessful){
-                Intent intent = new Intent(getActivity(), MainMenuActivity.class);
-                Toast.makeText(getActivity(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
-                requireActivity().finish();
             }
         });
 
@@ -121,10 +111,19 @@ public class RegisterFragment extends Fragment {
 
         });
 
+
+        binding.btnSignup.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(
+                    R.id.action_loginFragment_to_registerFragment
+            );
+        });
+
         return binding.getRoot();
     }
 
-    public void createAccount(String email, String password) {
-        viewModel.createUserWithEmailAndPassword(email, password);
+    public void signIn(String email, String password) {
+        viewModel.signInWithEmailAndPassword(email, password);
     }
+
 }

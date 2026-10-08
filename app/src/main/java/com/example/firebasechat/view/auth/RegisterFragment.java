@@ -1,6 +1,4 @@
-package com.example.firebasechat.view;
-
-import androidx.lifecycle.ViewModelProvider;
+package com.example.firebasechat.view.auth;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -9,25 +7,24 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.firebasechat.R;
-import com.example.firebasechat.databinding.FragmentLoginBinding;
+import com.example.firebasechat.databinding.FragmentRegisterBinding;
+import com.example.firebasechat.view.mainmenu.MainMenuActivity;
 import com.example.firebasechat.viewmodel.LoginViewModel;
 
-public class LoginFragment extends Fragment {
+public class RegisterFragment extends Fragment {
+
     private LoginViewModel viewModel;
+    private FragmentRegisterBinding binding;
 
-    private FragmentLoginBinding binding;
-
-    public static LoginFragment newInstance() {
-        return new LoginFragment();
+    public RegisterFragment() {
+        // Required empty public constructor
     }
 
     @SuppressLint("SetTextI18n") //para settext //ELIMINAR
@@ -35,13 +32,12 @@ public class LoginFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
-        binding = FragmentLoginBinding.inflate(inflater, container, false);
+        binding = FragmentRegisterBinding.inflate(inflater, container, false);
 
         binding.txtEmailAddress.setText("admin123@gmail.com");  //ELIMINAR
         binding.txtPassword.setText("admin123");
 
-
-        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
+        binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = binding.txtEmailAddress.getText().toString().trim();
@@ -61,9 +57,19 @@ public class LoginFragment extends Fragment {
                     isValid = false;
                 }
                 if (isValid) {
-                    signIn(email, password);
+                    createAccount(email, password);
                 }
 
+            }
+        });
+
+        //Check if Register was successful
+        viewModel.isSignupSuccessful().observe(getViewLifecycleOwner(), isSignupSuccessful ->{
+            if (isSignupSuccessful){
+                Intent intent = new Intent(getActivity(), MainMenuActivity.class);
+                Toast.makeText(getActivity(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+                requireActivity().finish();
             }
         });
 
@@ -112,19 +118,10 @@ public class LoginFragment extends Fragment {
 
         });
 
-
-        binding.btnSignup.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(requireView());
-            navController.navigate(
-                    R.id.action_loginFragment_to_registerFragment
-            );
-        });
-
         return binding.getRoot();
     }
 
-    public void signIn(String email, String password) {
-        viewModel.signInWithEmailAndPassword(email, password);
+    public void createAccount(String email, String password) {
+        viewModel.createUserWithEmailAndPassword(email, password);
     }
-
 }

@@ -1,4 +1,4 @@
-package com.example.firebasechat.view;
+package com.example.firebasechat.view.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.firebasechat.R;
+import com.example.firebasechat.view.mainmenu.MainMenuActivity;
 import com.example.firebasechat.viewmodel.LoginViewModel;
 
 public class AuthActivity extends AppCompatActivity {
