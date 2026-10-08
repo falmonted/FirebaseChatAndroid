@@ -7,13 +7,17 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.firebasechat.model.AuthError;
-import com.example.firebasechat.repository.AuthCallback;
-import com.example.firebasechat.repository.FireAuthRepository;
+import com.example.firebasechat.model.User;
+import com.example.firebasechat.repository.auth.AuthCallback;
+import com.example.firebasechat.repository.auth.FireAuthRepository;
+import com.example.firebasechat.repository.user.FireStoreUserRepository;
+import com.example.firebasechat.repository.user.UserRepositoryCallback;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginViewModel extends ViewModel {
     private final FireAuthRepository authRepository = FireAuthRepository.getInstance();
+    private final FireStoreUserRepository fireStoreUserRepository = FireStoreUserRepository.getInstance();
     private static final String TAG = "LoginViewModel";
     private MutableLiveData<Boolean> isLoginSuccessful = new MutableLiveData<>();
     private MutableLiveData<Boolean> isSignupSuccessful = new MutableLiveData<>();
@@ -38,8 +42,12 @@ public class LoginViewModel extends ViewModel {
     public void createUserWithEmailAndPassword(String email, String password) {
         authRepository.createUserWithEmailAndPassword(email, password, new AuthCallback() {
             @Override
-            public void onSuccess(FirebaseUser user) { // Use user
-                isSignupSuccessful.setValue(true); //ForRegister
+            public void onSuccess(FirebaseUser firebaseUser) { // Use user
+                if (firebaseUser == null) {
+                    isSignupSuccessful.setValue(false);
+                }
+                //Creates user on Firestore
+                createFirestoreUser(firebaseUser);
             }
 
             @Override
@@ -54,10 +62,12 @@ public class LoginViewModel extends ViewModel {
         });
     }
 
+
     public void signInWithEmailAndPassword(String email, String password) {
         authRepository.signInWithEmailAndPassword(email, password, new AuthCallback() {
             @Override
             public void onSuccess(FirebaseUser user) { // Use user
+                Log.i(TAG, "User SignIn Successful");
                 isLoginSuccessful.setValue(true); //ForRegister
             }
 
@@ -69,6 +79,26 @@ public class LoginViewModel extends ViewModel {
                     String errorCode = ((FirebaseAuthException) exception).getErrorCode();
                     authError.setValue(getAuthError(errorCode));
                 }
+            }
+        });
+    }
+
+    // Only has LOG onSucess and onFailure
+    private void createFirestoreUser(FirebaseUser firebaseUser) {
+
+        User user = new User(firebaseUser.getUid(), firebaseUser.getEmail());
+        fireStoreUserRepository.addOrEditNewUser(user, new UserRepositoryCallback() {
+            @Override
+            public void onSuccess() {
+                Log.i(TAG, "User Firestore account created Successful");
+                isSignupSuccessful.setValue(false);
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                Log.e(TAG, "User Firestore account created FAIL");
+                Log.e(TAG, exception.toString());
+                isSignupSuccessful.setValue(false);
             }
         });
     }

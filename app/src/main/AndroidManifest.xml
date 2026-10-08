@@ -12,11 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FirebaseChat">
         <activity
-            android:name=".view.MainMenuActivity"
+            android:name=".view.mainmenu.MainMenuActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".view.AuthActivity"
+            android:name=".view.auth.AuthActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
