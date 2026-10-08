@@ -1,39 +1,76 @@
 package com.example.firebasechat.model;
 
 
-import java.time.LocalDateTime;
+import com.google.firebase.Timestamp;
+
 
 public class Message {
-    private String messageID;
+    private String messageId;
     private String chatId;
     private String senderId;
     private String content;
-    private LocalDateTime timestamp;
-    private Media media = null;
+    private Timestamp timestamp;
+    private String mediaUrl;
+    private String mediaPath;
+    private MediaType mediaType;
+    private Long mediaSizeBytes;
 
-    public Message(String messageID, String chatId, String senderId, String content, LocalDateTime timestamp, Media media) {
-        this.messageID = messageID;
+    public enum MediaType {
+        IMAGE,
+        VIDEO,
+        AUDIO,
+        DOCUMENT
+    }
+
+    public Message() {
+    }
+
+    public Message(String messageId, String chatId, String senderId, String content, Timestamp timestamp) {
+        this.messageId = messageId;
         this.chatId = chatId;
         this.senderId = senderId;
         this.content = content;
         this.timestamp = timestamp;
-        this.media = media;
     }
 
-    public Message(String messageID, String chatId, String senderId, String content, LocalDateTime timestamp) {
-        this.messageID = messageID;
-        this.chatId = chatId;
-        this.senderId = senderId;
-        this.content = content;
-        this.timestamp = timestamp;
+    public String getMessageId() {
+        return messageId;
     }
 
-    public String getMessageID() {
-        return messageID;
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
-    public void setMessageID(String messageID) {
-        this.messageID = messageID;
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        this.mediaUrl = mediaUrl;
+    }
+
+    public String getMediaPath() {
+        return mediaPath;
+    }
+
+    public void setMediaPath(String mediaPath) {
+        this.mediaPath = mediaPath;
+    }
+
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(MediaType mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    public Long getMediaSizeBytes() {
+        return mediaSizeBytes;
+    }
+
+    public void setMediaSizeBytes(Long mediaSizeBytes) {
+        this.mediaSizeBytes = mediaSizeBytes;
     }
 
     public String getChatId() {
@@ -60,19 +97,12 @@ public class Message {
         this.content = content;
     }
 
-    public LocalDateTime getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 
-    public Media getMedia() {
-        return media;
-    }
-
-    public void setMedia(Media media) {
-        this.media = media;
-    }
 }
