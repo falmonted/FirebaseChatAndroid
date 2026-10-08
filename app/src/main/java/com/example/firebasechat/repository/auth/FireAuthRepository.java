@@ -1,11 +1,9 @@
-package com.example.firebasechat.repository;
+package com.example.firebasechat.repository.auth;
 
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public class FireAuthRepository {
     private static FireAuthRepository instance = null;
