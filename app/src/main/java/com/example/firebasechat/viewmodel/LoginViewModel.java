@@ -39,7 +39,7 @@ public class LoginViewModel extends ViewModel {
         return authRepository.getCurrentUser() != null;
     }
 
-    public void createUserWithEmailAndPassword(String email, String password) {
+    public void createUserWithEmailAndPassword(String name, String email, String password) {
         authRepository.createUserWithEmailAndPassword(email, password, new AuthCallback() {
             @Override
             public void onSuccess(FirebaseUser firebaseUser) { // Use user
@@ -47,7 +47,8 @@ public class LoginViewModel extends ViewModel {
                     isSignupSuccessful.setValue(false);
                 }
                 //Creates user on Firestore
-                createFirestoreUser(firebaseUser);
+                User user = new User(firebaseUser.getUid(), name, firebaseUser.getEmail());
+                createFirestoreUser(user);
             }
 
             @Override
@@ -84,9 +85,8 @@ public class LoginViewModel extends ViewModel {
     }
 
     // Only has LOG onSucess and onFailure
-    private void createFirestoreUser(FirebaseUser firebaseUser) {
+    private void createFirestoreUser(User user) {
 
-        User user = new User(firebaseUser.getUid(), firebaseUser.getEmail());
         fireStoreUserRepository.addOrEditNewUser(user, new UserRepositoryCallback() {
             @Override
             public void onSuccess() {

@@ -21,9 +21,26 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/lbName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/txtEmailHint"
+        android:text="@string/lblName"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/txtName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text" />
+
+    <TextView
         android:id="@+id/lbEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
         android:hint="@string/txtEmailHint"
         android:text="@string/lbEmail"
         android:textSize="20sp"
@@ -61,7 +78,7 @@
         android:id="@+id/btnSignup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="80dp"
         android:layout_marginBottom="40dp"
         android:backgroundTint="@color/colorSignup"
         android:text="@string/btnSignUptxt"

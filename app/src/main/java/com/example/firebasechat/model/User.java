@@ -35,8 +35,9 @@ public class User {
         this.last_seen = last_seen;
     }
 
-    public User(String userId, String email) {
+    public User(String userId, String username, String email) {
         this.userId = userId;
+        this.username = username;
         this.email = email;
     }
 

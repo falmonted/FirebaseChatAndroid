@@ -24,7 +24,7 @@ public class AuthActivity extends AppCompatActivity {
         //Checks if user has already log
         viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
 
-       viewModel.userSignOut();
+        viewModel.userSignOut();
 
         if (viewModel.isUserLog()) {
             Intent intent = new Intent(AuthActivity.this, MainMenuActivity.class);
@@ -41,11 +41,9 @@ public class AuthActivity extends AppCompatActivity {
         });
 
 
-
-
         viewModel.isLoginSuccessful().observe(this, isLoginSuccessful -> {
             Intent intent = new Intent(AuthActivity.this, MainMenuActivity.class);
-            if (Boolean.TRUE.equals(isLoginSuccessful)){
+            if (Boolean.TRUE.equals(isLoginSuccessful)) {
                 Toast.makeText(this, "Inicio de Sesión Exitoso", Toast.LENGTH_SHORT).show();
                 startActivity(intent);
                 finish();

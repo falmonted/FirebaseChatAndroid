@@ -40,11 +40,13 @@ public class RegisterFragment extends Fragment {
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = binding.txtName.getText().toString().trim();
                 String email = binding.txtEmailAddress.getText().toString().trim();
                 String password = binding.txtPassword.getText().toString();
 
                 binding.txtEmailAddress.setError(null);
                 binding.txtPassword.setError(null);
+                binding.txtName.setError(null);
 
                 boolean isValid = true;
 
@@ -53,11 +55,15 @@ public class RegisterFragment extends Fragment {
                     isValid = false;
                 }
                 if (password.isBlank()) {
-                    binding.txtPassword.setError("El contraseña  es obligatoria");
+                    binding.txtPassword.setError("El contraseña es obligatoria");
+                    isValid = false;
+                }
+                if (name.isBlank()) {
+                    binding.txtName.setError("El nombre es obligatorio");
                     isValid = false;
                 }
                 if (isValid) {
-                    createAccount(email, password);
+                    createAccount(name, email, password);
                 }
 
             }
@@ -121,7 +127,7 @@ public class RegisterFragment extends Fragment {
         return binding.getRoot();
     }
 
-    public void createAccount(String email, String password) {
-        viewModel.createUserWithEmailAndPassword(email, password);
+    public void createAccount(String name, String email, String password) {
+        viewModel.createUserWithEmailAndPassword(name, email, password);
     }
 }

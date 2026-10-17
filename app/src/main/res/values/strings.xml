@@ -10,4 +10,5 @@
     <string name="lbNotAccount">¿No tienes cuenta?</string>
     <string name="btnSignUptxt">Sign Up</string>
     <string name="btnLoginTxt">Log In</string>
+    <string name="lblName">Nombre</string>
 </resources>
