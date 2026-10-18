@@ -8,7 +8,13 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="lbNotAccount">¿No tienes cuenta?</string>
-    <string name="btnSignUptxt">Sign Up</string>
+    <string name="lbRegistrar">Registrar</string>
     <string name="btnLoginTxt">Log In</string>
     <string name="lblName">Nombre</string>
+    <string name="lbProfile">Perfil</string>
+    <string name="btnEdit">Editar</string>
+    <string name="lbCrearCuenta">Crear Cuenta</string>
+    <string name="btnUpdate">Actualizar</string>
+    <string name="navBottonBarMainMenu">Chats</string>
+    <string name="navBottonBarProfile">Perfil</string>
 </resources>

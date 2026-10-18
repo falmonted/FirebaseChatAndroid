@@ -81,6 +81,6 @@
         android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorSignup"
-        android:text="@string/btnSignUptxt" />
+        android:text="@string/lbRegistrar" />
 
 </LinearLayout>

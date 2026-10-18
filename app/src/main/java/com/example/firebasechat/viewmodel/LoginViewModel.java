@@ -87,11 +87,11 @@ public class LoginViewModel extends ViewModel {
     // Only has LOG onSucess and onFailure
     private void createFirestoreUser(User user) {
 
-        fireStoreUserRepository.addOrEditNewUser(user, new UserRepositoryCallback() {
+        fireStoreUserRepository.registerUser(user, new UserRepositoryCallback() {
             @Override
             public void onSuccess() {
                 Log.i(TAG, "User Firestore account created Successful");
-                isSignupSuccessful.setValue(false);
+                isSignupSuccessful.setValue(true);
             }
 
             @Override
