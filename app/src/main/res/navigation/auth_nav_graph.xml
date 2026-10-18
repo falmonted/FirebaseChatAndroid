@@ -12,14 +12,24 @@
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_mainMenuActivity"
+            app:destination="@id/mainMenuActivity" />
     </fragment>
 
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.example.firebasechat.view.auth.RegisterFragment"
         tools:layout="@layout/fragment_register">
+        <action
+            android:id="@+id/action_registerFragment_to_mainMenuActivity"
+            app:destination="@id/mainMenuActivity" />
     </fragment>
-
+    <activity
+        android:id="@+id/mainMenuActivity"
+        android:name="com.example.firebasechat.view.mainmenu.MainMenuActivity"
+        android:label="activity_main_menu"
+        tools:layout="@layout/activity_main_menu" />
 
 
 </navigation>

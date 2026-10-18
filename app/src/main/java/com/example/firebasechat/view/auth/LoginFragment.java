@@ -113,10 +113,7 @@ public class LoginFragment extends Fragment {
 
 
         binding.btnSignup.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(requireView());
-            navController.navigate(
-                    R.id.action_loginFragment_to_registerFragment
-            );
+            Navigation.findNavController(requireView()).navigate(R.id.action_loginFragment_to_registerFragment);
         });
 
         return binding.getRoot();

@@ -69,16 +69,6 @@ public class RegisterFragment extends Fragment {
             }
         });
 
-        //Check if Register was successful
-        viewModel.isSignupSuccessful().observe(getViewLifecycleOwner(), isSignupSuccessful ->{
-            if (isSignupSuccessful){
-                Intent intent = new Intent(getActivity(), MainMenuActivity.class);
-                Toast.makeText(getActivity(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
-                requireActivity().finish();
-            }
-        });
-
         //FireAuthRepository errors
         viewModel.authError().observe(getViewLifecycleOwner(), authError -> {
             if (authError == null) {
