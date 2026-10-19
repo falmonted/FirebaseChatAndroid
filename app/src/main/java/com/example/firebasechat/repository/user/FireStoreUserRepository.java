@@ -9,6 +9,7 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class FireStoreUserRepository {
     private static FireStoreUserRepository instance = null;
@@ -58,6 +59,26 @@ public class FireStoreUserRepository {
                     User user = documentSnapshot.toObject(User.class);
                     Log.d(TAG, "User profile updated successfully");
                     callback.onSuccess(user);
+                }).addOnFailureListener(exception -> {
+                    Log.d(TAG, "User doesn't exist");
+                    callback.onFailure(exception);
+                });
+    }
+
+    public void getUserByEmail(String userEmail, GetUserRepositoryCallback callback) {
+        db.collection("users")
+                .whereEqualTo("email", userEmail)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    if (!querySnapshot.isEmpty()) {
+                        DocumentSnapshot document = querySnapshot.getDocuments().get(0);
+                        User user = document.toObject(User.class);
+                        Log.d(TAG, "User profile updated successfully");
+                        callback.onSuccess(user);
+                    } else {
+                        Log.d(TAG, "User not found");
+                        callback.onFailure(new NoSuchElementException("User not found"));
+                    }
                 }).addOnFailureListener(exception -> {
                     Log.d(TAG, "User doesn't exist");
                     callback.onFailure(exception);

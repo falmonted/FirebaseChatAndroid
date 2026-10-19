@@ -28,7 +28,7 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Checks if user has already log
         viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
-        viewModel.userSignOut(); //TODO: Deleted
+//        viewModel.userSignOut(); //TODO: Deleted
 
         //Creating navController
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()

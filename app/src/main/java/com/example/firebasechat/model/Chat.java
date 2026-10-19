@@ -2,6 +2,7 @@ package com.example.firebasechat.model;
 
 import com.google.firebase.Timestamp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -9,7 +10,7 @@ public class Chat {
     private String chatId;
     private Timestamp createdAt;
     private ChatType chatType;
-    private List<String> participantIds;
+    private List<String> participantIds = new ArrayList<>();
     private String lastMessage;
     private Timestamp lastMessageTimestamp;
 
@@ -30,6 +31,10 @@ public class Chat {
 
     public String getLastMessage() {
         return lastMessage;
+    }
+
+    public void addParticipant(String idParticipant) {
+        this.participantIds.add(idParticipant);
     }
 
     public void setLastMessage(String lastMessage) {

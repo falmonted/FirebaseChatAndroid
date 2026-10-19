@@ -23,8 +23,6 @@ import java.util.ArrayList;
 public class MainMenuActivity extends AppCompatActivity {
     ArrayList<Chat> chatsModels = new ArrayList<>();
     private ActivityMainMenuBinding binding;
-    private ChatRecyclerViewAdapter adapter;
-    private RecyclerView recyclerView;
     private NavController navController;
 
     @Override
@@ -44,30 +42,5 @@ public class MainMenuActivity extends AppCompatActivity {
 
             NavigationUI.setupWithNavController(bottomNav, navController);
         }
-
-//        // RecyclerView
-//        binding.chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//
-//        // Adapter
-//        adapter = new ChatRecyclerViewAdapter(this, chatsModels);
-//        binding.chatsRecyclerView.setAdapter(adapter);
-//
-//
-//            RecyclerView recyclerView = binding.chatsRecyclerView;
-//
-//
-//            //Bring models before adapter
-//            ChatRecyclerViewAdapter adapter = new ChatRecyclerViewAdapter(this, chatsModels);
-//            recyclerView.setAdapter(adapter);
-//            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
-
     }
 }

@@ -37,7 +37,8 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
     public void onBindViewHolder(@NonNull ChatRecyclerViewAdapter.MyViewHolder holder, int position) {
         //Assigning values to each row depending on position on screen
         holder.chatContent.setText(chatsModels.get(position).getLastMessage());
-        holder.chaTimestamp.setText(chatsModels.get(position).getLastMessageTimestamp().toString());
+
+        holder.chaTimestamp.setText(chatsModels.get(position).getLastMessageTimestamp().toDate().toString());
     }
 
     @Override

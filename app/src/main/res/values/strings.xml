@@ -17,4 +17,8 @@
     <string name="btnUpdate">Actualizar</string>
     <string name="navBottonBarMainMenu">Chats</string>
     <string name="navBottonBarProfile">Perfil</string>
+    <string name="btnLogout">Cerrar Sesión</string>
+    <string name="lbAddChat">Agregar Chat</string>
+    <string name="lbEnterEmail">Introduzca email de usuario</string>
+    <string name="lbAdd">Agregar</string>
 </resources>

@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_chatsFragment_to_userProfileFragment"
             app:destination="@id/userProfileFragment" />
+        <action
+            android:id="@+id/action_chatsFragment_to_addChatDialogFragment"
+            app:destination="@id/addChatDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/messagesFragment"
@@ -26,5 +29,19 @@
         android:id="@+id/userProfileFragment"
         android:name="com.example.firebasechat.view.user.UserProfileFragment"
         android:label="fragment_user_profile"
-        tools:layout="@layout/fragment_user_profile" />
+        tools:layout="@layout/fragment_user_profile" >
+        <action
+            android:id="@+id/action_userProfileFragment_to_authActivity"
+            app:destination="@id/authActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/authActivity"
+        android:name="com.example.firebasechat.view.auth.AuthActivity"
+        android:label="activity_auth"
+        tools:layout="@layout/activity_auth" />
+    <dialog
+        android:id="@+id/addChatDialogFragment"
+        android:name="com.example.firebasechat.view.mainmenu.AddChatDialogFragment"
+        android:label="AddChatDialogFragment"
+        tools:layout="@layout/fragment_add_chat_dialog"/>
 </navigation>

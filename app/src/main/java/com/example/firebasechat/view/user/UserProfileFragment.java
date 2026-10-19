@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +16,14 @@ import android.widget.Toast;
 
 import com.example.firebasechat.R;
 import com.example.firebasechat.model.User;
+import com.example.firebasechat.viewmodel.LoginViewModel;
 import com.example.firebasechat.viewmodel.UserViewModel;
 import com.example.firebasechat.databinding.FragmentUserProfileBinding;
 
 public class UserProfileFragment extends Fragment {
 
-    private UserViewModel viewModel;
+    private UserViewModel userViewModel;
+    private LoginViewModel loginRegisterViewModel;
     private FragmentUserProfileBinding binding;
 
     public static UserProfileFragment newInstance() {
@@ -31,12 +34,12 @@ public class UserProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        viewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         binding = FragmentUserProfileBinding.inflate(inflater, container, false);
 
         // Updated User Profile
-        viewModel.getCurrentUserFirestore();
-        viewModel.getCurrentLogUser().observe(getViewLifecycleOwner(), logUser -> {
+        userViewModel.getCurrentUserFirestore();
+        userViewModel.getCurrentLogUser().observe(getViewLifecycleOwner(), logUser -> {
             if (logUser != null) {
                 setUserProfileData(logUser);
             }
@@ -61,13 +64,20 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
-        viewModel.isUserUpdateSuccessful().observe(getViewLifecycleOwner(), isUserUpdated -> {
+        binding.btnLogout.setOnClickListener(v -> {
+            loginRegisterViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
+            loginRegisterViewModel.userSignOut();
+            Navigation.findNavController(requireView()).navigate(R.id.action_userProfileFragment_to_authActivity);
+            getActivity().finish();
+        });
+
+        userViewModel.isUserUpdateSuccessful().observe(getViewLifecycleOwner(), isUserUpdated -> {
             if (isUserUpdated) {
                 Toast.makeText(requireContext(), "Perfil Actualizado Exitosamente", Toast.LENGTH_SHORT).show();
             }
         });
 
-        viewModel.userModifiedException().observe(getViewLifecycleOwner(), exception -> {
+        userViewModel.userModifiedException().observe(getViewLifecycleOwner(), exception -> {
             if (exception != null) {
                 Toast.makeText(requireContext(), "Error al Actualizar Pefil", Toast.LENGTH_SHORT).show();
             }
@@ -79,7 +89,7 @@ public class UserProfileFragment extends Fragment {
     public void updateProfile (String name) {
         User user =  new User();
         user.setUsername(name);
-        viewModel.updateUserProfile(user);
+        userViewModel.updateUserProfile(user);
     }
 
     public void setUserProfileData (User user) {
