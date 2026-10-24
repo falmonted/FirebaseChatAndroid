@@ -1,15 +1,17 @@
 package com.example.firebasechat.model;
 
-
 import com.google.firebase.Timestamp;
-
+import com.google.firebase.firestore.ServerTimestamp;
 
 public class Message {
     private String messageId;
     private String chatId;
     private String senderId;
     private String content;
+
+    @ServerTimestamp
     private Timestamp timestamp;
+
     private String mediaUrl;
     private String mediaPath;
     private MediaType mediaType;
@@ -17,6 +19,7 @@ public class Message {
 
     public enum MediaType {
         IMAGE,
+        TEXT,
         VIDEO,
         AUDIO,
         DOCUMENT
@@ -104,5 +107,4 @@ public class Message {
     public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
-
 }

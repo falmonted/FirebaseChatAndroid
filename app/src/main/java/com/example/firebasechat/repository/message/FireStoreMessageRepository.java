@@ -2,17 +2,19 @@ package com.example.firebasechat.repository.message;
 
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
 import com.example.firebasechat.model.Message;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FireStoreMessageRepository {
 
@@ -40,26 +42,37 @@ public class FireStoreMessageRepository {
             return;
         }
 
-        if (message.getMessageId() == null) {
-            callback.onFailure(new IllegalArgumentException("Message ID cannot be null"));
-            return;
-        }
-
         if (message.getChatId() == null) {
             callback.onFailure(new IllegalArgumentException("Chat ID cannot be null"));
             return;
         }
 
-        db.collection("chats").document(message.getChatId())
-                .collection("messages")
-                .document(message.getMessageId())
-                .set(message)
+        DocumentReference docRef;
+        if (message.getMessageId() != null && !message.getMessageId().isEmpty()) {
+            docRef = db.collection("chats").document(message.getChatId())
+                    .collection("messages").document(message.getMessageId());
+        } else {
+            // Firestore auto-generates unique document ID
+            docRef = db.collection("chats").document(message.getChatId())
+                    .collection("messages").document();
+            // Assign generated ID to message object attribute
+            message.setMessageId(docRef.getId());
+        }
+
+        docRef.set(message)
                 .addOnSuccessListener(unused -> {
-                    Log.d(TAG, "Message sent successfully");
+                    Log.d(TAG, "Message sent successfully with ID: " + docRef.getId());
+
+                    // Update lastMessage and lastMessageTimestamp on the parent chat document
+                    Map<String, Object> lastMsgUpdate = new HashMap<>();
+                    lastMsgUpdate.put("lastMessage", message.getContent() != null ? message.getContent() : "");
+                    lastMsgUpdate.put("lastMessageTimestamp", FieldValue.serverTimestamp());
+                    db.collection("chats").document(message.getChatId()).update(lastMsgUpdate);
+
                     callback.onSuccess();
                 })
                 .addOnFailureListener(exception -> {
-                    Log.e(TAG,"Error sending message", exception);
+                    Log.e(TAG, "Error sending message", exception);
                     callback.onFailure(exception);
                 });
     }
@@ -92,7 +105,7 @@ public class FireStoreMessageRepository {
                 });
     }
 
-    //Message realtime
+    // Message realtime
     public ListenerRegistration listenToMessages(String chatId, MessagesCallback callback) {
 
         if (chatId == null || chatId.isEmpty()) {
