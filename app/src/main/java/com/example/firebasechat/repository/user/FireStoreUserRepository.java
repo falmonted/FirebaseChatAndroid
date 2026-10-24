@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.firebasechat.model.User;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
@@ -82,6 +83,32 @@ public class FireStoreUserRepository {
                 }).addOnFailureListener(exception -> {
                     Log.d(TAG, "User doesn't exist");
                     callback.onFailure(exception);
+                });
+    }
+
+    public ListenerRegistration listenToUserById(String userId, GetUserRepositoryCallback callback) {
+        if (userId == null || userId.isEmpty()) {
+            callback.onFailure(new IllegalArgumentException("chat ID cannot be empty"));
+            return null;
+        }
+
+        return db.collection("users").document(userId)
+                .addSnapshotListener((snapshot, error) -> {
+                    if (error != null) {
+                        Log.e(TAG, "Error listening to user", error);
+                        callback.onFailure(error);
+                        return;
+                    }
+                    if (snapshot != null && snapshot.exists()) {
+                        User user = snapshot.toObject(User.class);
+                        if (user != null) {
+                            callback.onSuccess(user);
+                        }
+                    } else {
+                        Log.w(TAG, "User doesn't exist");
+                        callback.onFailure(new Exception("User not found"));
+                    }
+
                 });
     }
 

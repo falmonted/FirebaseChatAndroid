@@ -12,6 +12,7 @@ import com.example.firebasechat.repository.auth.FireAuthRepository;
 import com.example.firebasechat.repository.chat.ChatListCallback;
 import com.example.firebasechat.repository.chat.ChatRepositoryCallBack;
 import com.example.firebasechat.repository.chat.FireStoreChatRepository;
+import com.example.firebasechat.repository.chat.GetChatCallback;
 import com.example.firebasechat.repository.user.FireStoreUserRepository;
 import com.example.firebasechat.repository.user.GetUserRepositoryCallback;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,11 +28,16 @@ public class ChatsViewModel extends ViewModel {
     private final MutableLiveData<List<Chat>> chats = new MutableLiveData<>();
     private final MutableLiveData<Exception> error = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isChatAdded = new MutableLiveData<>();
+    private final MutableLiveData<Chat> chatMutableLiveData = new MutableLiveData<>();
     private ListenerRegistration chatListener;
 
     public LiveData<List<Chat>> getChats() {
         return chats;
     }
+    public LiveData<Chat> getChat() {
+        return chatMutableLiveData;
+    }
+
     public LiveData<Boolean> isChatAdded() {
         return isChatAdded;
     }
@@ -40,13 +46,35 @@ public class ChatsViewModel extends ViewModel {
         return error;
     }
 
-    public void listenToUserChats(String userId) {
+    public void listenToUserChats() {
         // Stop previous listener if there is one
+        String logUserID = authRepository.getCurrentUser().getUid();
         stopListeningToChats();
-        chatListener = chatRepository.listenToUserChats(userId, new ChatListCallback() {
+        chatListener = chatRepository.listenToUserChats(logUserID, new ChatListCallback() {
             @Override
             public void onSuccess(List<Chat> chatList) {
-                chats.setValue(chatList);
+                // Assign the chat title base on the other participant name
+                for (Chat chat : chatList) {
+                    String otherParticipantId = getOtherParticipantId(chat.getParticipantIds());
+                    userRepository.getUserById(otherParticipantId, new GetUserRepositoryCallback() {
+
+                        @Override
+                        public void onSuccess(User user) {
+                            if (user.getUsername() != null) {
+                                chat.setTitle(user.getUsername());
+                            } else {
+                                chat.setTitle("Unknown User");
+                            }
+                            chats.setValue(chatList);
+                        }
+
+                        @Override
+                        public void onFailure(Exception exception) {
+                            chat.setTitle("Unknown User");
+                            chats.setValue(chatList);
+                        }
+                    });
+                }
             }
 
             @Override
@@ -95,6 +123,35 @@ public class ChatsViewModel extends ViewModel {
 
             }
 
+            @Override
+            public void onFailure(Exception exception) {
+                Log.e(TAG, "Cannot Find User", exception);
+                error.setValue(exception);
+            }
+        });
+    }
+
+
+
+    public String getOtherParticipantId (List<String> chatParticipantsId){
+        String currentUserId = authRepository.getCurrentUser().getUid();
+
+        if (currentUserId.equals(chatParticipantsId.get(0))) {
+            return chatParticipantsId.get(1);
+        } else {
+            return chatParticipantsId.get(0);
+        }
+    };
+
+    public void getChatById(String chatId) {
+        chatRepository.getChatById(chatId, new GetChatCallback() {
+            @Override
+            public void onSuccess(Chat chat) {
+                if (chat != null) {
+                    Log.i(TAG, "chat found");
+                    chatMutableLiveData.setValue(chat);
+                }
+            }
             @Override
             public void onFailure(Exception exception) {
                 Log.e(TAG, "Cannot Find User", exception);

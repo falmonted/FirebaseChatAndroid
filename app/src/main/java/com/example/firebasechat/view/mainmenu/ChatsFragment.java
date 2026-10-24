@@ -1,5 +1,7 @@
 package com.example.firebasechat.view.mainmenu;
 
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
+
 import android.os.Bundle;
 
 import androidx.core.graphics.Insets;
@@ -11,15 +13,17 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.firebasechat.R;
 import com.example.firebasechat.databinding.FragmentChatsBinding;
-import com.example.firebasechat.databinding.FragmentMessagesBinding;
 import com.example.firebasechat.model.Chat;
+import com.example.firebasechat.model.User;
 import com.example.firebasechat.viewmodel.ChatsViewModel;
+import com.example.firebasechat.viewmodel.UserViewModel;
 import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
@@ -30,43 +34,22 @@ public class ChatsFragment extends Fragment {
     private FragmentChatsBinding binding;
     private ChatRecyclerViewAdapter adapter;
     private RecyclerView recyclerView;
-    private ArrayList<Chat> chatsModels;
+    private ArrayList<Chat> chatsModels = new ArrayList<>();
     private ChatsViewModel chatsViewModel;
+    private UserViewModel userViewModel;
+    private final String TAG = "ChatsFragment";
 
     public ChatsFragment() {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-//    public static ChatsFragment newInstance(String param1, String param2) {
-//
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
+    public interface getSelectChatCallback {
+        void onSuccess(String chatId);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
-        chatsModels = new ArrayList<>();
-        Chat chat1 = new Chat("123", Timestamp.now(), Chat.ChatType.INDIVIDUAL, List.of("1", "2"));
-        Chat chat2 = new Chat("124", Timestamp.now(), Chat.ChatType.INDIVIDUAL, List.of("3", "4"));
-        Chat chat3 = new Chat("124", Timestamp.now(), Chat.ChatType.INDIVIDUAL, List.of("3", "4"));
-        chat1.setLastMessage("klk");
-        chat1.setLastMessageTimestamp(Timestamp.now());
-        chat2.setLastMessage("klk");
-        chat2.setLastMessageTimestamp(Timestamp.now());
-        chat3.setLastMessage("klk");
-        chat3.setLastMessageTimestamp(Timestamp.now());
-        chatsModels.add(chat1);
-        chatsModels.add(chat2);
-        chatsModels.add(chat3);
     }
 
     @Override
@@ -77,14 +60,32 @@ public class ChatsFragment extends Fragment {
 
         // RecyclerView
         RecyclerView recyclerView = binding.chatsRecyclerView;
-        // Adapter and Layout
-        adapter = new ChatRecyclerViewAdapter(getContext(), chatsModels);
+        // Adapter and Layout & listener for row/chat selected
+        adapter = new ChatRecyclerViewAdapter(getContext(), chatsModels, new ChatRecyclerViewAdapter.OnChatClickListener() {
+            //OpenChat
+            @Override
+            public void onChatClick(String chatSelectedId) {
+                ChatsFragmentDirections.ActionChatsToConversation action =
+                        ChatsFragmentDirections.actionChatsToConversation();
+                action.setChatId(chatSelectedId);
+                Navigation.findNavController(requireView()).navigate(action);
+            }
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(adapter);
 
-
-
+        //Initialize viewModels
         chatsViewModel = new ViewModelProvider(requireActivity()).get(ChatsViewModel.class);
+        userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+
+        chatsViewModel.listenToUserChats();
+        chatsViewModel.getChats().observe(getViewLifecycleOwner(), chats -> {
+            if (chats != null) {
+                adapter.chatsModels = new ArrayList<Chat>(chats);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
         //AddChat
         binding.btnAddChat.setOnClickListener(v -> {
             chatsViewModel.resetAddChatState();

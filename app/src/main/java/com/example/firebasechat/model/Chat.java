@@ -10,6 +10,7 @@ public class Chat {
     private String chatId;
     private Timestamp createdAt;
     private ChatType chatType;
+    private String title;
     private List<String> participantIds = new ArrayList<>();
     private String lastMessage;
     private Timestamp lastMessageTimestamp;
@@ -27,6 +28,14 @@ public class Chat {
         this.createdAt = createdAt;
         this.chatType = chatType;
         this.participantIds = participantIds;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getLastMessage() {

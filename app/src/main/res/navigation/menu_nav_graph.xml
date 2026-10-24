@@ -11,20 +11,15 @@
         android:label="fragment_chats"
         tools:layout="@layout/fragment_chats" >
         <action
-            android:id="@+id/action_chatsFragment_to_messagesFragment"
-            app:destination="@id/messagesFragment" />
-        <action
             android:id="@+id/action_chatsFragment_to_userProfileFragment"
             app:destination="@id/userProfileFragment" />
         <action
             android:id="@+id/action_chatsFragment_to_addChatDialogFragment"
             app:destination="@id/addChatDialogFragment" />
+        <action
+            android:id="@+id/action_chats_to_conversation"
+            app:destination="@id/conversationFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/messagesFragment"
-        android:name="com.example.firebasechat.view.MessagesFragment"
-        android:label="fragment_messages"
-        tools:layout="@layout/fragment_messages" />
     <fragment
         android:id="@+id/userProfileFragment"
         android:name="com.example.firebasechat.view.user.UserProfileFragment"
@@ -44,4 +39,18 @@
         android:name="com.example.firebasechat.view.mainmenu.AddChatDialogFragment"
         android:label="AddChatDialogFragment"
         tools:layout="@layout/fragment_add_chat_dialog"/>
+    <fragment
+        android:id="@+id/conversationFragment"
+        android:name="com.example.firebasechat.view.mainmenu.ConversationFragment"
+        android:label="fragment_converstion"
+        tools:layout="@layout/fragment_conversation" >
+        <argument
+            android:name="chatId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+        <action
+            android:id="@+id/action_conversationFragment_to_chatsFragment"
+            app:destination="@id/chatsFragment" />
+    </fragment>
 </navigation>

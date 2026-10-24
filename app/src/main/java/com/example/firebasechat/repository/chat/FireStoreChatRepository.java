@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.firebasechat.model.Chat;
 import com.example.firebasechat.model.User;
+import com.example.firebasechat.repository.user.GetUserRepositoryCallback;
 import com.example.firebasechat.repository.user.UserRepositoryCallback;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
@@ -82,6 +83,19 @@ public class FireStoreChatRepository {
                     callback.onSuccess();
                 }).addOnFailureListener(exception -> {
                     Log.e(TAG,"Error adding Chat", exception);
+                    callback.onFailure(exception);
+                });
+    }
+
+    public void getChatById(String chatId, GetChatCallback callback) {
+        db.collection("chats").document(chatId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Chat chat = documentSnapshot.toObject(Chat.class);
+                    Log.d(TAG, "Get Chat successful");
+                    callback.onSuccess(chat);
+                }).addOnFailureListener(exception -> {
+                    Log.d(TAG, "Chat doesn't exist");
                     callback.onFailure(exception);
                 });
     }

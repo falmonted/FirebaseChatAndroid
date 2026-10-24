@@ -16,6 +16,7 @@ firebaseBom = "34.19.0"
 fragment = "1.9.1"
 navigationFragmentKtx = "2.10.2"
 navigationUiKtx = "2.10.2"
+androidx-navegation-safeargs = "2.10.2"
 recyclerview = "1.4.0"
 cardview = "1.0.0"
 
@@ -44,4 +45,5 @@ cardview = { group = "androidx.cardview", name = "cardview", version.ref = "card
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices"}
+navigationSafeargs = { id = "androidx.navigation.safeargs", version.ref = "androidx-navegation-safeargs" }
 

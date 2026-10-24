@@ -23,11 +23,11 @@
                 android:id="@+id/chatImage"
                 android:layout_width="60sp"
                 android:layout_height="50sp"
+                android:src="@drawable/simple_chat_vector"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:src="@drawable/simple_chat_vector"
-                app:shapeAppearanceOverlay="@style/CircularImageView"/>
+                app:shapeAppearanceOverlay="@style/CircularImageView" />
 
             <TextView
                 android:id="@+id/chatNameView"

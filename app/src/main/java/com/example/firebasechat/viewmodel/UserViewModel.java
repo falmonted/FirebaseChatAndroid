@@ -1,16 +1,23 @@
 package com.example.firebasechat.viewmodel;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.firebasechat.model.AuthError;
+import com.example.firebasechat.model.Chat;
 import com.example.firebasechat.model.User;
 import com.example.firebasechat.repository.auth.FireAuthRepository;
+import com.example.firebasechat.repository.chat.ChatListCallback;
 import com.example.firebasechat.repository.user.FireStoreUserRepository;
 import com.example.firebasechat.repository.user.GetUserRepositoryCallback;
 import com.example.firebasechat.repository.user.UserRepositoryCallback;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.ListenerRegistration;
+
+import java.util.List;
 
 public class UserViewModel extends ViewModel {
     // TODO: Implement the ViewModel
@@ -22,6 +29,7 @@ public class UserViewModel extends ViewModel {
     private MutableLiveData<User> userByIdMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> userUpdateSuccesful = new MutableLiveData<>();
     private MutableLiveData<User> getCurrentLogUserMutableLiveData = new MutableLiveData<>();
+    private ListenerRegistration userListener;
 
     public LiveData<Exception> userModifiedException(){
         return exceptionMutableLiveData;
@@ -83,5 +91,34 @@ public class UserViewModel extends ViewModel {
                 exceptionMutableLiveData.setValue(exception);
             }
         });
+    }
+
+    public String getCurrentLogUserId() {
+        return authRepository.getCurrentUser().getUid();
+    }
+
+    public void listenToUser(String userId) {
+        // Stop previous listener if there is one
+        stopListeningUser();
+        userListener = fireStoreUserRepository.listenToUserById(userId, new GetUserRepositoryCallback() {
+            @Override
+            public void onSuccess(User user) {
+                if (user != null) {
+                    userByIdMutableLiveData.setValue(user);
+                }
+            }
+            @Override
+            public void onFailure(Exception exception) {
+                Log.e(TAG, "Error listening to user", exception);
+                exceptionMutableLiveData.setValue(exception);
+            }
+        });
+    }
+
+    public void stopListeningUser() {
+        if (userListener != null) {
+            userListener.remove();
+            userListener = null;
+        }
     }
 }

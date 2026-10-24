@@ -12,16 +12,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.firebasechat.R;
 import com.example.firebasechat.model.Chat;
+import com.example.firebasechat.model.User;
+import com.example.firebasechat.repository.auth.FireAuthRepository;
+import com.example.firebasechat.repository.user.FireStoreUserRepository;
+import com.example.firebasechat.repository.user.GetUserRepositoryCallback;
 
 import java.util.ArrayList;
 
 public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerViewAdapter.MyViewHolder> {
     Context context;
     ArrayList<Chat> chatsModels;
+    private OnChatClickListener listener;
 
-    public ChatRecyclerViewAdapter (Context context, ArrayList<Chat> chatsModels) {
+    public interface OnChatClickListener {
+        void onChatClick(String chatSelectedId);
+    }
+
+    public ChatRecyclerViewAdapter (Context context, ArrayList<Chat> chatsModels, OnChatClickListener listener) {
         this.context = context;
         this.chatsModels = chatsModels;
+        this.listener = listener;
     }
 
     @NonNull
@@ -37,8 +47,11 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
     public void onBindViewHolder(@NonNull ChatRecyclerViewAdapter.MyViewHolder holder, int position) {
         //Assigning values to each row depending on position on screen
         holder.chatContent.setText(chatsModels.get(position).getLastMessage());
-
         holder.chaTimestamp.setText(chatsModels.get(position).getLastMessageTimestamp().toDate().toString());
+        holder.chatName.setText(chatsModels.get(position).getTitle());
+        //TODO: Add image
+        //Pass chatId to listener
+        holder.bind(chatsModels.get(position).getChatId(), listener);
     }
 
     @Override
@@ -56,9 +69,13 @@ public class ChatRecyclerViewAdapter extends RecyclerView.Adapter<ChatRecyclerVi
             super(itemView);
 
 //            imageView = itemView.findViewById(R.id.chatImage);
-//            chatName = itemView.findViewById(R.id.chatNameView);
+            chatName = itemView.findViewById(R.id.chatNameView);
             chatContent = itemView.findViewById(R.id.chatContentView);
             chaTimestamp = itemView.findViewById(R.id.chatTimeView);
+        }
+
+        public void bind(final String chatId, final OnChatClickListener listener) {
+            itemView.setOnClickListener(v -> listener.onChatClick(chatId));
         }
     }
 }
