@@ -8,9 +8,9 @@ public class User {
     private String email;
     private boolean isOnline;
     private Timestamp  last_seen;
-
     private String profilePicUrl;
     private String profilePicPath;
+    private String fcmToken;
 
     public User() {
     }

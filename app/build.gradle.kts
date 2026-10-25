@@ -60,6 +60,6 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.ui.storage)
+    implementation(libs.firebase.messaging)
     implementation(libs.bumtech.glide)
-
 }

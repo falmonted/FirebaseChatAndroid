@@ -112,4 +112,13 @@ public class FireStoreUserRepository {
                 });
     }
 
+    public void setFcmToken(String userId, String fcmToken) {
+        db.collection("users").document(userId).update("fcmToken", fcmToken)
+                .addOnCompleteListener(v -> {
+                    Log.w(TAG, "FCM token has been set");
+                }).addOnFailureListener( exception -> {
+                    Log.w(TAG, "Error setting FCM token", exception);
+                });
+    }
+
 }

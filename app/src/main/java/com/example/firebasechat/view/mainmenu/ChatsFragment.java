@@ -2,8 +2,14 @@ package com.example.firebasechat.view.mainmenu;
 
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -22,9 +28,11 @@ import com.example.firebasechat.R;
 import com.example.firebasechat.databinding.FragmentChatsBinding;
 import com.example.firebasechat.model.Chat;
 import com.example.firebasechat.model.User;
+import com.example.firebasechat.repository.user.FireStoreUserRepository;
 import com.example.firebasechat.viewmodel.ChatsViewModel;
 import com.example.firebasechat.viewmodel.UserViewModel;
 import com.google.firebase.Timestamp;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +46,16 @@ public class ChatsFragment extends Fragment {
     private ChatsViewModel chatsViewModel;
     private UserViewModel userViewModel;
     private final String TAG = "ChatsFragment";
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    Log.d(TAG, "Notification permission granted");
+                    fetchAndSaveFcmToken();
+                } else {
+                    Log.w(TAG, "Notification permission denied");
+                }
+            });
 
     public ChatsFragment() {
         // Required empty public constructor
@@ -92,6 +110,40 @@ public class ChatsFragment extends Fragment {
             Navigation.findNavController(requireView())
                     .navigate(R.id.action_chatsFragment_to_addChatDialogFragment);
         });
+
+        // Ask for notification permission
+        askNotificationPermission();
+
         return binding.getRoot();
+    }
+
+    private void fetchAndSaveFcmToken() {
+        if (userViewModel != null) {
+            String currentUserId = userViewModel.getCurrentLogUserId();
+            if (currentUserId != null) {
+                FirebaseMessaging.getInstance().getToken()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful() && task.getResult() != null) {
+                                String token = task.getResult();
+                                FireStoreUserRepository.getInstance().setFcmToken(currentUserId, token);
+                            }
+                        });
+            }
+        }
+    }
+
+    private void askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) ==
+                    PackageManager.PERMISSION_GRANTED) {
+                fetchAndSaveFcmToken();
+            } else {
+                // Directly ask for the permission
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        } else {
+            fetchAndSaveFcmToken();
+        }
     }
 }
