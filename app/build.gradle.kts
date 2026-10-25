@@ -32,8 +32,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    buildFeatures{
-        viewBinding = true;
+    buildFeatures {
+        viewBinding = true
     }
 }
 
@@ -57,5 +57,9 @@ dependencies {
     //firebase implementations
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore);
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.ui.storage)
+    implementation(libs.bumtech.glide)
+
 }

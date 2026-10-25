@@ -1,5 +1,6 @@
 package com.example.firebasechat.viewmodel;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -7,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.firebasechat.model.Message;
+import com.example.firebasechat.repository.message.FireStorageImgRepository;
 import com.example.firebasechat.repository.message.FireStoreMessageRepository;
 import com.example.firebasechat.repository.message.MessageRepositoryCallback;
 import com.example.firebasechat.repository.message.MessagesCallback;
@@ -17,6 +19,7 @@ import java.util.List;
 public class MessagesViewModel extends ViewModel {
     private static final String TAG = "MessageViewModel";
     private final FireStoreMessageRepository messageRepository = FireStoreMessageRepository.getInstance();
+    private final FireStorageImgRepository imgRepository = FireStorageImgRepository.getInstance();
     private final MutableLiveData<List<Message>> messages = new MutableLiveData<>();
     private final MutableLiveData<Boolean> isMessageOperationSuccessful = new MutableLiveData<>();
     private final MutableLiveData<Exception> error = new MutableLiveData<>();
@@ -35,8 +38,8 @@ public class MessagesViewModel extends ViewModel {
         return error;
     }
 
-    public void sendMessage(Message message) {
-        messageRepository.sendMessage(message, new MessageRepositoryCallback() {
+    public void sendMessage(Message message, Uri imageUri) {
+        messageRepository.sendMessage(message, imageUri, new MessageRepositoryCallback() {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "Message sent successfully");
@@ -49,6 +52,10 @@ public class MessagesViewModel extends ViewModel {
                 error.setValue(exception);
             }
         });
+    }
+
+    public void sendMessage(Message message) {
+        sendMessage(message, null);
     }
 
     public void updateMessage(Message message) {

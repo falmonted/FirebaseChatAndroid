@@ -4,11 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.firebasechat.R;
 import com.example.firebasechat.model.Message;
 
@@ -38,10 +40,10 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
         Message message = messagesModels.get(position);
         boolean isCurrentUser = message.getSenderId() != null && Objects.equals(message.getSenderId(), currentUserId);
 
-        if (isCurrentUser) {
-            return MessageType.TEXT_SEND.ordinal();
+        if (message.getMediaType() == Message.MediaType.IMAGE) {
+            return isCurrentUser ? MessageType.IMG_SEND.ordinal() : MessageType.IMG_RECEIVE.ordinal();
         } else {
-            return MessageType.TEXT_RECEIVE.ordinal();
+            return isCurrentUser ? MessageType.TEXT_SEND.ordinal() : MessageType.TEXT_RECEIVE.ordinal();
         }
     }
 
@@ -55,18 +57,38 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
             view = inflater.inflate(R.layout.message_text_send, parent, false);
         } else if (viewType == MessageType.TEXT_RECEIVE.ordinal()) {
             view = inflater.inflate(R.layout.message_text_receive, parent, false);
+        } else if (viewType == MessageType.IMG_SEND.ordinal()) {
+            view = inflater.inflate(R.layout.message_img_send, parent, false);
+        } else if (viewType == MessageType.IMG_RECEIVE.ordinal()) {
+            view = inflater.inflate(R.layout.message_img_receive, parent, false);
         } else {
             view = inflater.inflate(R.layout.message_text_send, parent, false);
         }
-
         return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MessagesRecyclerViewAdapter.MyViewHolder holder, int position) {
         Message message = messagesModels.get(position);
-        if (holder.messageContent != null && message.getContent() != null) {
-            holder.messageContent.setText(message.getContent());
+        int viewType = getItemViewType(position);
+
+        if (viewType == MessageType.IMG_SEND.ordinal() || viewType == MessageType.IMG_RECEIVE.ordinal()) {
+            if (holder.messageImage != null) {
+                holder.messageImage.setVisibility(View.VISIBLE);
+                if (message.getMediaUrl() != null && !message.getMediaUrl().isEmpty()) {
+                    Glide.with(context)
+                            .load(message.getMediaUrl())
+                            .placeholder(R.drawable.add_image_vector)
+                            .error(R.drawable.add_image_vector)
+                            .into(holder.messageImage);
+                } else {
+                    holder.messageImage.setImageResource(R.drawable.add_image_vector);
+                }
+            }
+        } else {
+            if (holder.messageContent != null) {
+                holder.messageContent.setText(message.getContent() != null ? message.getContent() : "");
+            }
         }
     }
 
@@ -82,12 +104,17 @@ public class MessagesRecyclerViewAdapter extends RecyclerView.Adapter<MessagesRe
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView messageContent;
+        ImageView messageImage;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             messageContent = itemView.findViewById(R.id.txtMsgSend);
             if (messageContent == null) {
                 messageContent = itemView.findViewById(R.id.txtMsgRecieve);
+            }
+            messageImage = itemView.findViewById(R.id.imgViewSend);
+            if (messageImage == null) {
+                messageImage = itemView.findViewById(R.id.imgViewReceive);
             }
         }
     }

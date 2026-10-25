@@ -1,10 +1,14 @@
 package com.example.firebasechat.view.mainmenu;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -27,6 +31,7 @@ public class ConversationFragment extends Fragment {
     private ChatsViewModel chatsViewModel;
     private UserViewModel userViewModel;
     private MessagesViewModel messagesViewModel;
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia;
     private FragmentConversationBinding binding;
     private String chatId = null;
     private String contactUserId = null;
@@ -48,6 +53,9 @@ public class ConversationFragment extends Fragment {
             chatId = args.getChatId();
         }
 
+        // Register photo picker activity launcher
+        mediaPicker();
+
         // Initialize viewModels
         chatsViewModel = new ViewModelProvider(requireActivity()).get(ChatsViewModel.class);
         userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
@@ -57,7 +65,9 @@ public class ConversationFragment extends Fragment {
         RecyclerView recyclerView = binding.recyclerViewMessages;
         currentUserId = userViewModel.getCurrentLogUserId();
         adapter = new MessagesRecyclerViewAdapter(requireContext(), messagesModels, currentUserId);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
 
         // Chat & Messages initialization
@@ -95,7 +105,7 @@ public class ConversationFragment extends Fragment {
             }
         });
 
-        // Send message button listener
+        // Send text message button listener
         binding.btnSendMsg.setOnClickListener(v -> {
             String messageText = binding.txtMessagebox.getText().toString().trim();
             if (!messageText.isEmpty() && chatId != null && currentUserId != null) {
@@ -110,11 +120,38 @@ public class ConversationFragment extends Fragment {
             }
         });
 
+        binding.btnAddPic.setOnClickListener(v -> mediaLauncher());
+
         binding.btnBack.setOnClickListener(v -> {
             Navigation.findNavController(requireView()).navigate(R.id.action_conversationFragment_to_chatsFragment);
         });
 
         return binding.getRoot();
+    }
+
+    public void mediaPicker() {
+        // Registers a photo picker activity launcher in single-select mode.
+        pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+            if (uri != null && chatId != null && currentUserId != null) {
+                Log.d("PhotoPicker", "Selected URI: " + uri);
+                Message message = new Message();
+                message.setChatId(chatId);
+                message.setSenderId(currentUserId);
+                message.setContent("IMAGE");
+                message.setMediaType(Message.MediaType.IMAGE);
+
+                messagesViewModel.sendMessage(message, uri);
+            } else {
+                Log.d("PhotoPicker", "No media selected");
+            }
+        });
+    }
+
+    public void mediaLauncher() {
+        // Launch the photo picker and let the user choose only images.
+        pickMedia.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.firebasechat.repository.message;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.example.firebasechat.model.Message;
@@ -21,7 +22,7 @@ public class FireStoreMessageRepository {
     private static final String TAG = "FireStoreMessageRepository";
 
     private static FireStoreMessageRepository instance = null;
-
+    private final FireStorageImgRepository imgRepository = FireStorageImgRepository.getInstance();
     private final FirebaseFirestore db;
 
     private FireStoreMessageRepository() {
@@ -36,7 +37,7 @@ public class FireStoreMessageRepository {
     }
 
     // create message
-    public void sendMessage(Message message, MessageRepositoryCallback callback) {
+    public void sendMessage(Message message, Uri imageUri, MessageRepositoryCallback callback) {
         if (message == null) {
             callback.onFailure(new IllegalArgumentException("Message cannot be null"));
             return;
@@ -59,13 +60,44 @@ public class FireStoreMessageRepository {
             message.setMessageId(docRef.getId());
         }
 
+        // Send IMG of message to Firebase Storage if type is IMAGE
+        if (message.getMediaType() == Message.MediaType.IMAGE && imageUri != null) {
+            imgRepository.uploadImgMessage(message.getChatId(), message.getMessageId(), imageUri, new FireStorageRepositoryCallBack() {
+                @Override
+                public void onSuccess(String mediaUrl, String mediaPath, Long mediaSizeBytes) {
+                    message.setMediaUrl(mediaUrl);
+                    message.setMediaPath(mediaPath);
+                    message.setMediaSizeBytes(mediaSizeBytes);
+
+                    // Save message to Firestore AFTER image upload finishes
+                    saveMessageToFirestore(docRef, message, callback);
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    Log.e(TAG, "IMG upload to Firebase Storage failed", exception);
+                    callback.onFailure(exception);
+                }
+            });
+        } else {
+            // Text message
+            saveMessageToFirestore(docRef, message, callback);
+        }
+    }
+
+    public void sendMessage(Message message, MessageRepositoryCallback callback) {
+        sendMessage(message, null, callback);
+    }
+
+    private void saveMessageToFirestore(DocumentReference docRef, Message message, MessageRepositoryCallback callback) {
         docRef.set(message)
                 .addOnSuccessListener(unused -> {
                     Log.d(TAG, "Message sent successfully with ID: " + docRef.getId());
 
                     // Update lastMessage and lastMessageTimestamp on the parent chat document
                     Map<String, Object> lastMsgUpdate = new HashMap<>();
-                    lastMsgUpdate.put("lastMessage", message.getContent() != null ? message.getContent() : "");
+                    String lastMsgText = (message.getMediaType() == Message.MediaType.IMAGE) ? "Imagen" : (message.getContent() != null ? message.getContent() : "");
+                    lastMsgUpdate.put("lastMessage", lastMsgText);
                     lastMsgUpdate.put("lastMessageTimestamp", FieldValue.serverTimestamp());
                     db.collection("chats").document(message.getChatId()).update(lastMsgUpdate);
 
